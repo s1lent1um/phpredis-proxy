@@ -67,11 +67,22 @@ class RedisProxy {
 		unset(self::$_pool[$this->_key]);
 	}
 
+	/**
+	 * get index of this connection in the pool
+	 * @return int
+	 */
 	public function getKey() {
 		return $this->_key;
 	}
 
 
+	/**
+	 * Connect to server and add it to source
+	 * $weight is used to determine relative amount of stored keys
+	 * @param string $host
+	 * @param int $port
+	 * @param int $weight
+	 */
 	public function addServer($host = '127.0.0.1', $port = 6379, $weight = 1) {
 		$redis = new Redis();
 		$connection_string = $host . ':' . $port;
@@ -81,6 +92,9 @@ class RedisProxy {
 	}
 
 
+	/**
+	 * Create $_hashring map
+	 */
 	protected function _initializeHashring() {
 
 		$connections_count = count($this->_connections);
@@ -133,10 +147,15 @@ class RedisProxy {
 	}
 
 
+	/**
+	 * returns connection resource pointing to server
+	 * where key $name should be stored
+	 * @param $name
+	 * @return Redis
+	 */
 	public function getConnectionByKeyName($name) {
-		$connections_count = count($this->_connections);
 		// If we have only one backend, return it.
-		if ($connections_count == 1) {
+		if (count($this->_connections) == 1) {
 			return $this->_connections;
 		}
 
@@ -144,28 +163,24 @@ class RedisProxy {
 			$this->_initializeHashring();
 		}
 
-//		 If the key has already been mapped, return the cached entry.
+		// If the key has already been mapped, return the cached entry.
 		if ($this->_cacheMax > 0 && isset($this->_cache[$name])) {
 			return $this->_cache[$name];
 		}
 
-		// Initialize the return array.
-		$return = array();
-
+		$return = null;
 		$crc32 = crc32($name);
 
 		// Select the slice to begin with.
 		$slice = floor($crc32 / $this->_slicesDiv);
 		if (!$this->_is64 && $slice < 0) $slice += $this->_slicesCount; // 32bit workaround
 
-		// This counter prevents going through more than 1 loop.
-
+		// walk through slice
 		foreach ($this->_hashring[$slice] as $position => $connection) {
 			if ($position < $crc32) continue;
 			$return = $connection;
 			break;
 		}
-
 
 		// Not found corresponding position. MUST be next one (first position of next slice)
 		if (empty($return)) {
@@ -192,6 +207,10 @@ class RedisProxy {
 		return $return;
 	}
 
+
+	/**
+	 * Cleans cache
+	 */
 	protected function _cleanCache() {
 		$this->_cache = array();
 		$this->_cacheCount = 0;
@@ -199,22 +218,24 @@ class RedisProxy {
 
 	public function __call($method, $args) {
 
+		if (!is_callable(array('Redis', $method))) {
+			throw new Exception("Method '$method' does not exist for phpredis");
+		}
+		if (!isset($args[0]) || !is_string($args[0])) {
+			throw new Exception("Only methods with \$key as first parameter can be overloaded");
+		}
 		if (empty($this->_connections)) {
 			throw new RedisException("No active redis servers");
 		}
 
 		$redis = $this->getConnectionByKeyName($args[0]);
-		if (!method_exists($redis, $method)) {
-			throw new Exception("Method '$method' does not exist for phpredis");
-		}
 
 		return call_user_func_array(array($redis, $method), $args);
 	}
 
 
 	/**
-	 *
-	 * close servers
+	 * close connections
 	 */
 	public function close() {
 		foreach ($this->_connections as $connection) {
