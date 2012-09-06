@@ -218,7 +218,7 @@ class RedisProxy {
 
 	public function __call($method, $args) {
 
-		if (!is_callable(array(new Redis(), $method))) {
+		if (!method_exists('Redis', $method)) {
 			throw new Exception("Method '$method' does not exist for phpredis");
 		}
 		if (!isset($args[0]) || !is_string($args[0])) {
