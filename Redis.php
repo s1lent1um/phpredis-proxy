@@ -156,7 +156,7 @@ class RedisProxy {
 	public function getConnectionByKeyName($name) {
 		// If we have only one backend, return it.
 		if (count($this->_connections) == 1) {
-			return $this->_connections;
+			return reset($this->_connections);
 		}
 
 		if (!$this->_hashringIsInitialized) {
@@ -218,7 +218,7 @@ class RedisProxy {
 
 	public function __call($method, $args) {
 
-		if (!is_callable(array('Redis', $method))) {
+		if (!is_callable(array(new Redis(), $method))) {
 			throw new Exception("Method '$method' does not exist for phpredis");
 		}
 		if (!isset($args[0]) || !is_string($args[0])) {
