@@ -85,10 +85,14 @@ class RedisProxy {
 	 */
 	public function addServer($host = '127.0.0.1', $port = 6379, $weight = 1) {
 		$redis = new Redis();
-		$connection_string = $host . ':' . $port;
-		$redis->pconnect($host, $port);
-		$this->_connections[$connection_string] = $redis;
-		$this->_weights[$connection_string] = $weight;
+		if ($redis->pconnect($host, $port)) {
+			$connection_string = $host . ':' . $port;
+			$this->_connections[$connection_string] = $redis;
+			$this->_weights[$connection_string] = $weight;
+			return true;
+		}
+		unset($redis);
+		return false;
 	}
 
 
