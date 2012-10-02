@@ -232,6 +232,7 @@ class RedisProxy {
 			throw new RedisException("No active redis servers");
 		}
 
+		if ($this->namespace) $args[0] = $this->namespace . $args[0];
 		$redis = $this->getConnectionByKeyName($args[0]);
 
 		return call_user_func_array(array($redis, $method), $args);
