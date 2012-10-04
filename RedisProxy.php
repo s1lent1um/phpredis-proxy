@@ -89,6 +89,7 @@ class RedisProxy {
 			$connection_string = $host . ':' . $port;
 			$this->_connections[$connection_string] = $redis;
 			$this->_weights[$connection_string] = $weight;
+            $this->_hashringIsInitialized = false;
 			return true;
 		}
 		unset($redis);
