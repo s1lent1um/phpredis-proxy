@@ -244,6 +244,7 @@ class RedisProxy {
 	 */
 	public function close() {
 		foreach ($this->_connections as $connection) {
+			/* @var Redis $connection */
 			$connection->close();
 		}
 	}
