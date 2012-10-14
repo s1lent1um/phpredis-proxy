@@ -8,6 +8,8 @@
 
 
 /**
+ * @method bool set(string $key, mixed $value) Set the string value in argument as value of the key
+ * @method string|bool get(string $key)  Gets a value stored at key. If the key doesn't exist, FALSE is returned
  * @method bool setex(string $key, int $ttl, mixed $value) Set the string value in argument as value of the key, with a time to live
  * @method bool setnx(string $key, mixed $value) Set the string value in argument as value of the key if the key doesn't already exist in the database
  * @method int del(string $key) Remove specified keys
