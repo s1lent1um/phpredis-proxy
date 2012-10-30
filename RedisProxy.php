@@ -196,6 +196,10 @@ class RedisProxy {
 
 	protected $_key;
 	public $namespace = '';
+
+	/**
+	 * @var Redis[]
+	 */
 	protected $_connections = array();
 	protected $_weights = array();
 
@@ -394,7 +398,7 @@ class RedisProxy {
 			throw new Exception("Only methods with \$key as first parameter can be overloaded");
 		}
 		if (empty($this->_connections)) {
-			throw new RedisException("No active redis servers");
+			return false;
 		}
 
 		if ($this->namespace) $args[0] = $this->namespace . $args[0];
@@ -404,8 +408,31 @@ class RedisProxy {
 	}
 
 
-	
-/**
+	/**
+	 * Check for active connections
+	 * @return bool
+	 */
+	public function status() {
+		return !empty($this->_connections);
+	}
+
+	/**
+	 * Select database by $dbIndex
+	 * @param $dbIndex
+	 * @return bool
+	 */
+	public function select($dbIndex) {
+		if (empty($this->_connections)) return false;
+		$res = true;
+		foreach ($this->_connections as $conn) {
+			if (!$conn->select($dbIndex)) $res = false;
+		}
+		return $res;
+
+	}
+
+
+	/**
 	 * close connections
 	 */
 	public function close() {
