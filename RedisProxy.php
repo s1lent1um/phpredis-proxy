@@ -171,8 +171,11 @@ class RedisProxy {
 	 * @static
 	 * @return RedisProxy
 	 */
-	public static function getInstance() {
-		return end(self::$_pool);
+	public static function getInstance($index=null) {
+		if (is_null($index)) {
+			return reset(self::$_pool);
+		}
+		return self::$_pool[$index];
 	}
 
 
