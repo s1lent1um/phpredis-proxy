@@ -229,7 +229,7 @@ class RedisProxy {
 	}
 
 	public function __destruct() {
-		$this->close();
+//		$this->close();
 		unset(self::$_pool[$this->_index]);
 	}
 
