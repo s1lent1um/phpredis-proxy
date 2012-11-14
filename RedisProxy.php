@@ -197,7 +197,7 @@ class RedisProxy {
 	}
 
 
-	protected $_key;
+	protected $_index;
 	public $namespace = '';
 
 	/**
@@ -224,13 +224,13 @@ class RedisProxy {
 
 	public function __construct() {
 		self::$_pool[] = $this;
-		$this->_key = count(self::$_pool) - 1;
+		$this->_index = count(self::$_pool) - 1;
 		$this->_is64 = PHP_INT_SIZE == 8;
 	}
 
 	public function __destruct() {
-		$this->close();
-		unset(self::$_pool[$this->_key]);
+//		$this->close();
+		unset(self::$_pool[$this->_index]);
 	}
 
 
@@ -239,8 +239,8 @@ class RedisProxy {
 	 *
 	 * @return int
 	 */
-	public function getKey() {
-		return $this->_key;
+	public function getIndex() {
+		return $this->_index;
 	}
 
 
