@@ -438,6 +438,30 @@ class RedisProxy {
 
 
 	/**
+	 * Flush data in current database
+	 *
+	 * @return bool
+	 */
+	public function flushDb() {
+		foreach ($this->_connections as $connection) {
+			$connection->flushDb();
+		}
+		return true;
+	}
+
+	/**
+	 * Flush ALl data in source
+	 *
+	 * @return bool
+	 */
+	public function flushAll() {
+		foreach ($this->_connections as $connection) {
+			$connection->flushAll();
+		}
+		return true;
+	}
+
+	/**
 	 * close connections
 	 */
 	public function close() {
