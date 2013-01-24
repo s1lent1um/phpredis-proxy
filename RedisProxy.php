@@ -26,7 +26,7 @@
  * @method int incrBy(string $key, int $value) Increment the number stored at key by the specified value. If the key does not exist it's value is initialized to be 0 first
  * @method int decr(string $key) Decrement the number stored at key by one. If the key does not exist it's value is initialized to be 0 first
  * @method int decrBy(string $key, int $value) Decrement the number stored at key by the specified value. If the key does not exist it's value is initialized to be 0 first
- * @method array getMultiple(array $keys) Get the values of all the specified keys. If one or more keys dont exist, the array will contain FALSE at the position of the key
+// * @method array getMultiple(array $keys) Get the values of all the specified keys. If one or more keys dont exist, the array will contain FALSE at the position of the key
  * @method int|bool lPush(string $key, mixed $value) Adds the string value to the head (left) of the list. Creates the list if the key didn't exist. If the key exists and is not a list, FALSE is returned
  * @method int|bool rPush(string $key, mixed $value) Adds the string value to the tail (right) of the list. Creates the list if the key didn't exist. If the key exists and is not a list, FALSE is returned
  * @method int|bool lPushx(string $key, mixed $value) Adds the string value to the head (left) of the list if the list exists
@@ -108,8 +108,8 @@
  * @method array ttl(string $key) Returns the time to live left for a given key, in seconds. If the key doesn't exist, FALSE is returned
  * @method array sort(string $key, array $options = array()) Sort a set and return the sorted members
  * @method bool persist(string $key) Remove the expiration timer from a key
- * @method bool mset(array $pairs) Sets multiple key-value pairs in one atomic command
- * @method bool msetnx(array $pairs) Sets multiple key-value pairs in one atomic command, setting only keys that did not exist
+// * @method bool mset(array $pairs) Sets multiple key-value pairs in one atomic command
+// * @method bool msetnx(array $pairs) Sets multiple key-value pairs in one atomic command, setting only keys that did not exist
  * @method string|bool rpoplpush(string $srcKey, string $dstKey) Pops a value from the tail of a list, and pushes it to the front of another list. Also return this value
  * @method string|bool brpoplpush(string $srcKey, string $dstKey, int $timeout = 0.0) A blocking version of rpoplpush, with an integral timeout in the third parameter
  * @method int zAdd(string $key, float $score, mixed $value) Adds the specified member with a given score to the sorted set stored at key
