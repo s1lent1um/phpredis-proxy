@@ -448,7 +448,7 @@ class RedisProxy {
 		if (func_num_args() == 1) {
 			$keys = $keys[0];
 		}
-        if (empty($keys)) return false;
+		if (empty($keys)) return false;
 		$res = 0;
 		$keys = $this->prependNamespace($keys);
 		foreach ($this->_connections as $conn) {
