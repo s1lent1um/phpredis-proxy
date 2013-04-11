@@ -464,6 +464,7 @@ class RedisProxy {
 	 */
 	public function mget($keys) {
 		if (empty($this->_connections)) return false;
+		if (empty($keys)) return false;
 		$keys = $this->prependNamespace($keys);
 		$res = [];
 		foreach ($this->_connections as $conn) {
