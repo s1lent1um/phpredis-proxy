@@ -520,13 +520,11 @@ class RedisProxy {
 	 * combine result arrays
 	 */
 	protected function prependNamespace($keys) {
-		$res = [];
-		foreach (func_get_args() as $array) {
-			foreach ($keys as $k => $v) {
-				$res[$k] = $this->namespace . $v;
-			}
+		if (is_string($keys)) $keys = $this->namespace . $keys;
+		if (is_array($keys)) foreach ($keys as $key) {
+			$res[$key] = $this->namespace . $key;
 		}
-		return $res;
+		return $keys;
 	}
 
 	/**
