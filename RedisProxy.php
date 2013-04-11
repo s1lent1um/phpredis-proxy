@@ -12,7 +12,6 @@
  * @method string|bool get(string $key)  Gets a value stored at key. If the key doesn't exist, FALSE is returned
  * @method bool setex(string $key, int $ttl, mixed $value) Set the string value in argument as value of the key, with a time to live
  * @method bool setnx(string $key, mixed $value) Set the string value in argument as value of the key if the key doesn't already exist in the database
- * @method int del(string $key) Remove specified keys
  * @method int delete(string $key) Remove specified keys (alias for del)
  * @-method RedisProxy multi(int $mode = Redis::MULTI) Enter transactional mode
  * @-method void exec() Executes a transaction
@@ -436,6 +435,46 @@ class RedisProxy {
 
 	}
 
+	/**
+	 * delete specified keys
+	 *
+	 * @param $key
+	 * @return int
+	 */
+	public function del() {
+		if (empty($this->_connections)) return false;
+		$keys = func_get_args();
+		if (func_num_args() == 0) return 0;
+		if (func_num_args() == 1) {
+			$keys = $keys[0];
+		}
+		$res = 0;
+		$keys = $this->prependNamespace($keys);
+		foreach ($this->_connections as $conn) {
+			$res += $conn->del($keys);
+		}
+		return $res;
+	}
+
+	/**
+	 * get values of specified keys
+	 *
+	 * @param $keys
+	 * @return array
+	 */
+	public function mget($keys) {
+		if (empty($this->_connections)) return false;
+		$keys = $this->prependNamespace($keys);
+		$res = [];
+		foreach ($this->_connections as $conn) {
+			$res = $this->combine($res, $conn->getMultiple($keys));
+		}
+		return $res;
+	}
+	public function getMultiple($keys) {
+		return $this->mget($keys);
+	}
+
 
 	/**
 	 * Flush data in current database
@@ -459,6 +498,33 @@ class RedisProxy {
 			$connection->flushAll();
 		}
 		return true;
+	}
+
+	/**
+	 * combine result arrays
+	 */
+	protected function combine() {
+		$res = [];
+		foreach (func_get_args() as $array) {
+			foreach ($array as $k => $v) {
+				if (isset($res[$k]) && $res[$k] !== false) continue;
+				$res[$k] = $v;
+			}
+		}
+		return $res;
+	}
+
+	/**
+	 * combine result arrays
+	 */
+	protected function prependNamespace($keys) {
+		$res = [];
+		foreach (func_get_args() as $array) {
+			foreach ($keys as $k => $v) {
+				$res[$k] = $this->namespace . $v;
+			}
+		}
+		return $res;
 	}
 
 	/**
