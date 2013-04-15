@@ -508,6 +508,9 @@ class RedisProxy {
 	protected function combine() {
 		$res = [];
 		foreach (func_get_args() as $array) {
+			if (!is_array($array)) {
+				return false;
+			}
 			foreach ($array as $k => $v) {
 				if (isset($res[$k]) && $res[$k] !== false) continue;
 				$res[$k] = $v;
