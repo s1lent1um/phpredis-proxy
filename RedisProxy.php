@@ -525,7 +525,7 @@ class RedisProxy {
 	protected function prependNamespace($keys) {
 		if (is_string($keys)) $keys = $this->namespace . $keys;
 		if (is_array($keys)) foreach ($keys as $key) {
-			$res[$key] = $this->namespace . $key;
+			$keys[$key] = $this->namespace . $key;
 		}
 		return $keys;
 	}
